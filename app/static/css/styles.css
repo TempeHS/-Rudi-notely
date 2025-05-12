@@ -1,0 +1,146 @@
+/* General body styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4; /* Light background color */
+    color: #333; /* Neutral text color */
+    text-align: center; /* Center text by default */
+}
+
+/* Headings */
+h1 {
+    color: #333;
+    font-size: 2rem;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+/* Paragraphs */
+p {
+    font-size: 1rem;
+    margin: 10px 0;
+    color: #555; /* Slightly lighter text color for paragraphs */
+}
+
+/* Links */
+a {
+    color: #007BFF; /* Match the button color */
+    text-decoration: none; /* Remove underline */
+    font-weight: bold; /* Make links stand out */
+}
+
+a:hover {
+    color: #0056b3; /* Match the button hover color */
+    text-decoration: underline; /* Add underline on hover */
+}
+
+/* Buttons */
+button {
+    padding: 10px 20px;
+    margin: 10px;
+    font-size: 16px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Forms */
+form {
+    margin: 20px auto;
+    padding: 20px;
+    max-width: 400px; /* Ensure consistent width */
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+    text-align: left; /* Align form content to the left */
+}
+
+form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+form input {
+    width: calc(100% - 20px); /* Ensure consistent width with padding */
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    box-sizing: border-box; /* Include padding in width calculation */
+}
+
+form button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: #0056b3;
+}
+
+/* Form links (e.g., "Don't have an account?") */
+form p {
+    text-align: center; /* Center the text */
+    margin-top: 15px; /* Add some spacing above the text */
+    font-size: 14px; /* Slightly smaller font size */
+    color: #333; /* Neutral text color */
+}
+
+form p a {
+    color: #007BFF; /* Match the button color */
+    text-decoration: none; /* Remove underline */
+    font-weight: bold; /* Make the link stand out */
+}
+
+form p a:hover {
+    color: #0056b3; /* Match the button hover color */
+    text-decoration: underline; /* Add underline on hover */
+}
+
+/* Div styling for buttons on the home page */
+div {
+    margin: 20px auto;
+    text-align: center; /* Center the buttons */
+}
+
+div a button {
+    display: inline-block;
+    width: auto; /* Allow buttons to size dynamically */
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+div a button:hover {
+    background-color: #0056b3;
+}
+
+/* Utility classes */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+}
+
+.hidden {
+    display: none;
+}
