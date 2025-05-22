@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+{% include "header.html" %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homepage</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div id="flash-messages">
+          {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <div class="container">
+        <h1>Welcome{% if username %}, {{ username }}{% endif %}!</h1>
+        <p>You have successfully signed in.</p>
+        <a href="/logout"><button>Log Out</button></a>
+    </div>
+
+    <script>
+      setTimeout(function() {
+        var flashMessages = document.getElementById('flash-messages');
+        if (flashMessages) {
+          flashMessages.style.display = 'none';
+        }
+      }, 3000);
+    </script>
+</body>
+</html>

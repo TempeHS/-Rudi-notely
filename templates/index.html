@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+{% include "header.html" %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <h1>Welcome to the Website</h1>
+    <p>Please choose an option below:</p>
+    <div>
+        <a href="/signin"><button>Sign In</button></a>
+        <a href="/signup"><button>Sign Up</button></a>
+    </div>
+</body>
+</html>
+<body>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div id="flash-messages">
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- Your page content here -->
+
+  <script>
+    setTimeout(function() {
+      var flashMessages = document.getElementById('flash-messages');
+      if (flashMessages) {
+        flashMessages.style.display = 'none';
+      }
+    }, 3000);
+  </script>
+</body>
+

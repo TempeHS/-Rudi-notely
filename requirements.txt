@@ -1,1 +1,7 @@
 Flask==2.3.2
+bcrypt
+flask_wtf
+flask_csp
+flask-wtf
+flask-csp
+requests
