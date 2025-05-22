@@ -10,6 +10,13 @@ def home():
     username = session.get('username')
     return render_template("index.html", username=username)
 
+@app.route("/calender")
+def calender():
+    if 'username' not in session:
+        flash("Please sign in to access the calendar.", "danger")
+        return redirect(url_for("signin"))
+    return render_template("calender.html", username=session.get('username'))
+
 @app.route("/signin", methods=["GET", "POST"])
 def signin():
     if request.method == "POST":
@@ -30,7 +37,11 @@ def signin():
 @app.route("/homepage")
 def homepage():
     username = session.get('username')
-    return render_template("homepage.html", username=username)
+    tasks = dbHandler.get_tasks_for_user(username)
+    return render_template("homepage.html", username=username, tasks=tasks)
+
+
+   
 
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
@@ -76,6 +87,23 @@ def validate_password(password):
         flash("Password must contain at least one special character", 'danger')
         return False
     return True
+
+@app.route("/add_task", methods=["GET", "POST"])
+def add_task():
+    if 'username' not in session:
+        flash("Please sign in to add a task.", "danger")
+        return redirect(url_for("signin"))
+    if request.method == "POST":
+        due_date = request.form.get("due_date")
+        title = request.form.get("title")
+        notes = request.form.get("notes")
+        username = session['username']
+        dbHandler.add_task(username, due_date, title, notes)
+        flash("Task added successfully!", "success")
+        return redirect(url_for("homepage"))
+    return render_template("add_task.html")
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)

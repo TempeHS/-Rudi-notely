@@ -3,9 +3,9 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4; /* Light background color */
-    color: #333; /* Neutral text color */
-    text-align: center; /* Center text by default */
+    background-color: #f4f4f4;
+    color: #333;
+    text-align: center;
 }
 
 /* Headings */
@@ -20,23 +20,22 @@ h1 {
 p {
     font-size: 1rem;
     margin: 10px 0;
-    color: #555; /* Slightly lighter text color for paragraphs */
+    color: #555;
 }
 
 /* Links */
 a {
-    color: #007BFF; /* Match the button color */
-    text-decoration: none; /* Remove underline */
-    font-weight: bold; /* Make links stand out */
+    color: #007BFF;
+    text-decoration: none;
+    font-weight: bold;
 }
-
 a:hover {
-    color: #0056b3; /* Match the button hover color */
-    text-decoration: underline; /* Add underline on hover */
+    color: #0056b3;
+    text-decoration: underline;
 }
 
 /* Buttons */
-button {
+button, .calendar-btn button {
     padding: 10px 20px;
     margin: 10px;
     font-size: 16px;
@@ -45,9 +44,9 @@ button {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    display: inline-block;
 }
-
-button:hover {
+button:hover, .calendar-btn button:hover {
     background-color: #0056b3;
 }
 
@@ -55,29 +54,26 @@ button:hover {
 form {
     margin: 20px auto;
     padding: 20px;
-    max-width: 400px; /* Ensure consistent width */
+    max-width: 400px;
     background: #fff;
     border: 1px solid #ccc;
     border-radius: 5px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
-    text-align: left; /* Align form content to the left */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: left;
 }
-
 form label {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
 }
-
-form input {
-    width: calc(100% - 20px); /* Ensure consistent width with padding */
+form input, form textarea {
+    width: calc(100% - 20px);
     padding: 10px;
     margin-bottom: 15px;
     border: 1px solid #ccc;
     border-radius: 3px;
-    box-sizing: border-box; /* Include padding in width calculation */
+    box-sizing: border-box;
 }
-
 form button {
     width: 100%;
     padding: 10px;
@@ -87,39 +83,33 @@ form button {
     border-radius: 3px;
     cursor: pointer;
 }
-
 form button:hover {
     background-color: #0056b3;
 }
-
-/* Form links (e.g., "Don't have an account?") */
 form p {
-    text-align: center; /* Center the text */
-    margin-top: 15px; /* Add some spacing above the text */
-    font-size: 14px; /* Slightly smaller font size */
-    color: #333; /* Neutral text color */
+    text-align: center;
+    margin-top: 15px;
+    font-size: 14px;
+    color: #333;
 }
-
 form p a {
-    color: #007BFF; /* Match the button color */
-    text-decoration: none; /* Remove underline */
-    font-weight: bold; /* Make the link stand out */
+    color: #007BFF;
+    text-decoration: none;
+    font-weight: bold;
 }
-
 form p a:hover {
-    color: #0056b3; /* Match the button hover color */
-    text-decoration: underline; /* Add underline on hover */
+    color: #0056b3;
+    text-decoration: underline;
 }
 
 /* Div styling for buttons on the home page */
 div {
     margin: 20px auto;
-    text-align: center; /* Center the buttons */
+    text-align: center;
 }
-
 div a button {
     display: inline-block;
-    width: auto; /* Allow buttons to size dynamically */
+    width: auto;
     padding: 10px 20px;
     font-size: 16px;
     background-color: #007BFF;
@@ -128,7 +118,6 @@ div a button {
     border-radius: 5px;
     cursor: pointer;
 }
-
 div a button:hover {
     background-color: #0056b3;
 }
@@ -140,11 +129,11 @@ div a button:hover {
     padding: 20px;
     text-align: center;
 }
-
 .hidden {
     display: none;
 }
 
+/* Flash messages */
 #flash-messages {
     position: fixed;
     top: 30px;
@@ -152,7 +141,6 @@ div a button:hover {
     transform: translateX(-50%);
     z-index: 1000;
 }
-
 .flash {
     padding: 15px 30px;
     margin-bottom: 10px;
@@ -163,16 +151,15 @@ div a button:hover {
     opacity: 0.95;
     animation: fadein 0.5s;
 }
-
 .flash.success { background: #28a745; }
 .flash.info    { background: #17a2b8; }
 .flash.danger  { background: #dc3545; }
-
 @keyframes fadein {
     from { opacity: 0; }
     to   { opacity: 0.95; }
 }
 
+/* Header */
 .site-header {
     background: #007BFF;
     color: #fff;
@@ -205,4 +192,55 @@ div a button:hover {
 }
 .nav-links a:hover {
     text-decoration: underline;
+}
+
+/* Task List Styling */
+.task-list {
+    list-style: none;
+    padding: 0;
+    margin: 30px auto 0 auto;
+    max-width: 500px;
+}
+.task-item {
+    background: #f9f9f9;
+    border-left: 6px solid #007BFF;
+    margin-bottom: 18px;
+    padding: 18px 22px 12px 22px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch; /* Ensures children (notes) can be centered */
+    transition: box-shadow 0.2s;
+}
+.task-item:hover {
+    box-shadow: 0 4px 16px rgba(0,123,255,0.13);
+}
+.task-item strong {
+    font-size: 1.15rem;
+    color: #007BFF;
+    margin-bottom: 6px;
+}
+.task-item span {
+    font-size: 0.98rem;
+    color: #555;
+    margin-bottom: 6px;
+}
+.task-notes {
+    background: #eef6ff;
+    color: #333;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 0.97rem;
+    margin-top: 6px;
+    width: 100%;
+    word-break: break-word;
+    text-align: center;
+    align-self: center;
+    max-width: 90%;
+}
+.no-tasks {
+    color: #888;
+    font-style: italic;
+    margin-top: 20px;
 }

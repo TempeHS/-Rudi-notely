@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+{% include "header.html" %}
+<head>
+    <meta charset="UTF-8">
+    <title>Calendar</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <style>
+        .calendar-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80vh;
+        }
+        .calendar-box {
+            background: #fff;
+            padding: 40px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            text-align: center;
+            min-width: 320px;
+        }
+        .calendar-box h2 {
+            margin-bottom: 20px;
+        }
+        input[type="date"], input[type="text"], textarea {
+            font-size: 1.1rem;
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-bottom: 15px;
+            width: 90%;
+            box-sizing: border-box;
+        }
+        textarea {
+            min-height: 60px;
+            resize: vertical;
+        }
+        .calendar-box button {
+            padding: 10px 20px;
+            background: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .calendar-box button:hover {
+            background: #0056b3;
+        }
+
+
+
+                .calendar-box form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .calendar-box button {
+            padding: 10px 20px;
+            background: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 10px;
+            /* Center the button */
+            display: block;
+        }
+        .calendar-box button:hover {
+            background: #0056b3;
+        }
+        .calendar-box label,
+        .calendar-box input[type="date"],
+        .calendar-box input[type="text"],
+        .calendar-box textarea {
+            width: 90%;
+            max-width: 350px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="calendar-container">
+        <div class="calendar-box">
+            <h2>Add a Task</h2>
+            <form action="/add_task" method="post">
+                <label for="due_date">Due Date:</label>
+                <input type="date" id="due_date" name="due_date" required>
+                <label for="title">Title:</label>
+                <input type="text" id="title" name="title" required>
+                <label for="notes">Notes:</label>
+                <textarea id="notes" name="notes" placeholder="Enter notes..."></textarea>
+                <button type="submit">Add Task</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

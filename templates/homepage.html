@@ -21,7 +21,24 @@
     <div class="container">
         <h1>Welcome{% if username %}, {{ username }}{% endif %}!</h1>
         <p>You have successfully signed in.</p>
-        <a href="/logout"><button>Log Out</button></a>
+        <a href="/calender" class="calendar-btn"><button>Add Task</button></a>
+
+        <h2 style="margin-top: 40px;">Upcoming Tasks</h2>
+        {% if tasks and tasks|length > 0 %}
+            <ul class="task-list">
+                {% for task in tasks %}
+                    <li class="task-item">
+                        <strong>{{ task.title }}</strong>
+                        <span>Due: {{ task.due_date }}</span>
+                        {% if task.notes %}
+                            <div class="task-notes">{{ task.notes }}</div>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="no-tasks">No upcoming tasks.</p>
+        {% endif %}
     </div>
 
     <script>

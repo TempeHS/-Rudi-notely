@@ -1,6 +1,8 @@
-CREATE TABLE users (
+CREATE TABLE tasks (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT NOT NULL UNIQUE,
-    email TEXT NOT NULL UNIQUE,
-    password TEXT NOT NULL
+    username TEXT NOT NULL,
+    due_date TEXT NOT NULL,
+    title TEXT NOT NULL,
+    notes TEXT,
+    FOREIGN KEY (username) REFERENCES users(username)
 );
