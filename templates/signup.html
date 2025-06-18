@@ -4,42 +4,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon/favicon.png') }}">
     <title>Sign Up</title>
     <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div id="flash-messages">
-          {% for category, message in messages %}
-            <div class="flash {{ category }}">{{ message }}</div>
-          {% endfor %}
-        </div>
-      {% endif %}
-    {% endwith %}
-
-    <h1>Sign Up</h1>
-    <form action="/signup" method="post">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required value="{{ username|default('') }}">
-        <br>
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required value="{{ email|default('') }}">
-        <br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <ul id="password-requirements">
-          <li id="req-length">At least 8 characters</li>
-          <li id="req-upper">At least one uppercase letter</li>
-          <li id="req-lower">At least one lowercase letter</li>
-          <li id="req-number">At least one number</li>
-          <li id="req-special">At least one special character (!@#$%^&*(),.?":{}|&lt;&gt;)</li>
-        </ul>
-        <br>
-        <button type="submit">Sign Up</button>
-    </form>
-    <p>Already have an account? <a href="/signin">Sign In</a></p>
-
+    <div class="container" style="max-width: 400px; margin: 40px auto;">
+        <h1 style="text-align:left;">Sign Up</h1>
+        <form action="/signup" method="post">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required value="{{ username|default('') }}">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required value="{{ email|default('') }}">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <ul id="password-requirements">
+                <li id="req-length">At least 8 characters</li>
+                <li id="req-upper">At least one uppercase letter</li>
+                <li id="req-lower">At least one lowercase letter</li>
+                <li id="req-number">At least one number</li>
+                <li id="req-special">At least one special character</li>
+            </ul>
+            <button type="submit">Sign Up</button>
+        </form>
+        <p style="text-align:left; margin-top:10px;">
+            Already have an account? <a href="/signin">Sign In</a>
+        </p>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div id="flash-messages">
+              {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+    </div>
     <script src="/static/js/signup.js"></script>
 </body>
 </html>
