@@ -3,11 +3,13 @@
         <a href="/" class="logo">Notely</a>
         <ul class="nav-links">
             {% if session.username %}
+                <li><a href="/groups">My Groups</a></li>
                 <li><a href="/homepage">My Tasks</a></li>
                 <li><a href="/calender">Create a Task</a></li>
                 <li><a href="/logout">Log Out ({{ session.username }})</a></li>
 
             {% else %}
+
                 <li><a href="/signup">Sign Up</a></li>
                 <li><a href="/signin">Sign In</a></li>
             {% endif %}

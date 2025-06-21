@@ -11,9 +11,9 @@
 <body>
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
-        <div id="flash-messages">
+        <div class="flashes flash-top-left">
           {% for category, message in messages %}
-            <div class="flash {{ category }}">{{ message }}</div>
+            <div class="flash flash-{{ category }}">{{ message }}</div>
           {% endfor %}
         </div>
       {% endif %}
@@ -34,6 +34,14 @@
                         {% if task.notes %}
                             <div class="task-notes">{{ task.notes }}</div>
                         {% endif %}
+                        <div class="task-meta" style="font-size:0.95em; color:#555; margin-top:0.3em;">
+                            Posted by: <b>{{ task.username }}</b>
+                            {% if task.group_name %}
+                                &nbsp;|&nbsp; Group: <b>{{ task.group_name }}</b>
+                            {% else %}
+                                &nbsp;|&nbsp; <b>Private</b>
+                            {% endif %}
+                        </div>
                     </li>
                 {% endfor %}
             </ul>
@@ -44,7 +52,7 @@
 
     <script>
       setTimeout(function() {
-        var flashMessages = document.getElementById('flash-messages');
+        var flashMessages = document.querySelector('.flashes');
         if (flashMessages) {
           flashMessages.style.display = 'none';
         }

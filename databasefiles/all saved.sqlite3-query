@@ -1,0 +1,60 @@
+-- database: ./mydatabase.db
+
+-- Use the ▷ button in the top right corner to run the entire file.
+
+-- Drop the table if it already exists
+
+
+
+
+-- Recreate the table structure
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL UNIQUE,
+    email TEXT NOT NULL UNIQUE,
+    password TEXT NOT NULL
+);
+
+DROP TABLE IF EXISTS users;
+
+
+
+CREATE TABLE tasks (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    group_id INTEGER,
+    due_date TEXT NOT NULL,
+    title TEXT NOT NULL,
+    notes TEXT,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (group_id) REFERENCES groups(id)
+);
+
+DROP TABLE IF EXISTS tasks;
+
+CREATE TABLE groups (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL UNIQUE,
+    password TEXT,
+    creator_id INTEGER,
+    FOREIGN KEY (creator_id) REFERENCES users(id)
+);
+
+DROP TABLE IF EXISTS groups;
+
+CREATE TABLE user_groups (
+    user_id INTEGER,
+    group_id INTEGER,
+    is_creator BOOLEAN DEFAULT 0,
+    PRIMARY KEY (user_id, group_id),
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (group_id) REFERENCES groups(id)
+);
+
+DROP TABLE IF EXISTS user_groups;
+
+
+ALTER TABLE tasks ADD COLUMN group_id INTEGER;
+
+
+ALTER TABLE tasks ADD COLUMN user_id INTEGER;

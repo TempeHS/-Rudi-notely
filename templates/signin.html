@@ -13,7 +13,7 @@
         <h1 style="text-align:left;">Sign In</h1>
         <form action="/signin" method="post">
             <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
+            <input type="text" id="username" name="username" required value="{{ username|default('') }}">
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
             <button type="submit">Sign In</button>
@@ -32,4 +32,3 @@
         {% endwith %}
     </div>
 </body>
-</html>

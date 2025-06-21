@@ -10,9 +10,9 @@
 <body>
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
-        <div id="flash-messages">
+        <div class="flashes flash-top-left">
           {% for category, message in messages %}
-            <div class="flash {{ category }}">{{ message }}</div>
+            <div class="flash flash-{{ category }}">{{ message }}</div>
           {% endfor %}
         </div>
       {% endif %}
@@ -28,6 +28,13 @@
                 <input type="text" id="title" name="title" required>
                 <label for="notes">Notes:</label>
                 <textarea id="notes" name="notes" placeholder="Enter notes..."></textarea>
+                <label for="group_id">Post To:</label>
+                <select id="group_id" name="group_id" class="custom-select">
+                    <option value="">Private (Just Me)</option>
+                    {% for group in user_groups %}
+                        <option value="{{ group.id }}">{{ group.name }}</option>
+                    {% endfor %}
+                </select>
                 <button type="submit">Add Task</button>
             </form>
             <a href="/homepage" class="back-home-btn">Back to Homepage</a>
@@ -41,3 +48,8 @@
                 this.style.height = 'auto';
                 this.style.height = (this.scrollHeight) + 'px';
             });
+        }
+    });
+    </script>
+</body>
+</html>
