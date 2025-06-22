@@ -1,6 +1,10 @@
 import re
 from flask import Flask, render_template, request, redirect, flash, session, url_for
 import userManagement as dbHandler
+from flask_mail import Mail, Message
+import random
+
+
 
 app = Flask(__name__)
 app.secret_key = "your_secret_key_here"  # Replace with a secure random key
@@ -8,6 +12,19 @@ app.secret_key = "your_secret_key_here"  # Replace with a secure random key
 #Greenapple123@wda
 #Joe_shmoe@12321
 #add notifications 
+
+
+
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'  # Or your SMTP server
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'somaticapollo@gmail.com'
+app.config['MAIL_PASSWORD'] = 'ahyr ltua aoub zbky'
+mail = Mail(app)
+app.config['MAIL_DEFAULT_SENDER'] = app.config['MAIL_USERNAME']
+
+
+
 @app.route("/")
 def home():
     username = session.get('username')
@@ -30,14 +47,41 @@ def signin():
         if not validate_password(password):
             return render_template("signin.html")
         if dbHandler.signin(str(username), str(password)):
-            session['username'] = username
-            flash(f"User {username} signed in successfully!", 'success')
-            # Redirect to homepage after successful sign in
-            return redirect(url_for("homepage"))
+            # 2FA: Generate code and send email
+            code = str(random.randint(100000, 999999))
+            session['2fa_code'] = code
+            session['2fa_username'] = username
+            email = dbHandler.get_email(username)
+            if email:
+                msg = Message(
+                    "Your Notely 2FA Code",
+                    recipients=[email],
+                    sender=app.config['MAIL_USERNAME']  # Ensure sender is set
+                )
+                msg.body = f"Your Notely 2FA code is: {code}"
+                mail.send(msg)
+                flash("A 2FA code has been sent to your email.", "info")
+                return render_template("2fa.html")
+            else:
+                flash("No email found for this user.", "danger")
+                return render_template("signin.html")
         else:
             flash("Invalid username or password", 'danger')
             return render_template("signin.html")
     return render_template("signin.html")
+
+@app.route("/2fa", methods=["GET", "POST"])
+def two_factor():
+    if request.method == "POST":
+        code = request.form.get("code")
+        if code == session.get('2fa_code'):
+            session['username'] = session.pop('2fa_username')
+            session.pop('2fa_code')
+            flash("2FA successful!", "success")
+            return redirect(url_for("homepage"))
+        else:
+            flash("Invalid 2FA code.", "danger")
+    return render_template("2fa.html")
 
 @app.route("/homepage")
 def homepage():
@@ -60,17 +104,20 @@ def signup():
         username = request.form.get("username")
         email = request.form.get("email")
         password = request.form.get("password")
+        # Validate the email
+        if not validate_email(email):
+            return render_template("signup.html", username=username, email=email)
         # Validate the password
         if not validate_password(password):
-            return render_template("signup.html")
+            return render_template("signup.html", username=username, email=email)
         if dbHandler.signup(str(username), str(email), str(password)):
             flash("Sign up successful!", "success")
             return redirect(url_for("signin"))
         else:
             flash("Username or email already exists.", "danger")
-            return render_template("signup.html")
+            return render_template("signup.html", username=username, email=email)
     return render_template("signup.html")
-
+    
 @app.route("/about")
 def about():
     return render_template("about.html")
@@ -82,8 +129,11 @@ def logout():
     return redirect(url_for("home"))
 
 def validate_password(password):
-    if len(password) < 8:
-        flash("Password must be at least 8 characters long", 'danger')
+    if not password:
+        flash("Password is required.", 'danger')
+        return False
+    if len(password) < 5:
+        flash("Password must be at least 5 characters long", 'danger')
         return False
     if not re.search(r"[A-Z]", password):
         flash("Password must contain at least one uppercase letter", 'danger')
@@ -94,8 +144,15 @@ def validate_password(password):
     if not re.search(r"[0-9]", password):
         flash("Password must contain at least one number", 'danger')
         return False
-    if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
-        flash("Password must contain at least one special character", 'danger')
+    return True
+
+import re
+
+def validate_email(email):
+    # Simple regex for email validation
+    email_regex = r"^[\w\.-]+@[\w\.-]+\.\w+$"
+    if not email or not re.match(email_regex, email):
+        flash("Please enter a valid email address.", "danger")
         return False
     return True
 

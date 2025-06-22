@@ -6,6 +6,10 @@
 
 
 
+DELETE FROM tasks;
+DELETE FROM user_groups;
+DELETE FROM groups;
+DELETE FROM users;
 
 -- Recreate the table structure
 CREATE TABLE users (

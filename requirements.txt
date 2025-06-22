@@ -5,3 +5,4 @@ flask_csp
 flask-wtf
 flask-csp
 requests
+Flask-Mail

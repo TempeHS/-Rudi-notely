@@ -210,3 +210,11 @@ def leave_group(username, group_id):
         cur.execute("DELETE FROM user_groups WHERE user_id=? AND group_id=?", (user_id, group_id))
         conn.commit()
         return True
+
+
+def get_email(username):
+    with sqlite3.connect(DB_PATH) as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT email FROM users WHERE username=?", (username,))
+        row = cur.fetchone()
+        return row[0] if row else None
