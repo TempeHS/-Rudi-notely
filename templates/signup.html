@@ -19,11 +19,10 @@
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
             <ul id="password-requirements">
-                <li id="req-length">At least 8 characters</li>
+                <li id="req-length">At least 5 characters</li>
                 <li id="req-upper">At least one uppercase letter</li>
                 <li id="req-lower">At least one lowercase letter</li>
                 <li id="req-number">At least one number</li>
-                <li id="req-special">At least one special character</li>
             </ul>
             <button type="submit">Sign Up</button>
         </form>
@@ -40,4 +39,6 @@
           {% endif %}
         {% endwith %}
     </div>
-    <script src
+    <script src="{{ url_for('static', filename='js/password-check.js') }}"></script>
+</body>
+</html>

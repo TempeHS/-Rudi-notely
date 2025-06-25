@@ -1,4 +1,5 @@
 import sqlite3
+import bcrypt
 
 DB_PATH = "databasefiles/mydatabase.db"
 
@@ -6,7 +7,9 @@ def signup(username, email, password):
     try:
         conn = sqlite3.connect(DB_PATH)
         cur = conn.cursor()
-        cur.execute("INSERT INTO users (username, email, password) VALUES (?, ?, ?)", (username, email, password))
+        # Hash the password before storing
+        hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+        cur.execute("INSERT INTO users (username, email, password) VALUES (?, ?, ?)", (username, email, hashed.decode('utf-8')))
         conn.commit()
         conn.close()
         return True
@@ -16,12 +19,13 @@ def signup(username, email, password):
 def signin(username, password):
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
-    cur.execute("SELECT * FROM users WHERE username=? AND password=?", (username, password))
-    user = cur.fetchone()
+    cur.execute("SELECT password FROM users WHERE username=?", (username,))
+    row = cur.fetchone()
     conn.close()
-    return user is not None
-
-
+    if row:
+        hashed = row[0]
+        return bcrypt.checkpw(password.encode('utf-8'), hashed.encode('utf-8'))
+    return False
 
 def add_task(username, title, due_date, notes, group_id=None):
     user_id = get_user_id(username)
@@ -38,7 +42,7 @@ def get_tasks_for_user_and_groups(user_id, group_ids):
         cur = conn.cursor()
         # Private tasks
         query = """
-            SELECT t.title, t.due_date, t.notes, u.username, NULL as group_name
+            SELECT t.id, t.title, t.due_date, t.notes, u.username, NULL as group_name, t.user_id
             FROM tasks t
             JOIN users u ON t.user_id = u.id
             WHERE t.user_id=? AND t.group_id IS NULL
@@ -49,7 +53,7 @@ def get_tasks_for_user_and_groups(user_id, group_ids):
             placeholders = ",".join("?" for _ in group_ids)
             query += f"""
                 UNION
-                SELECT t.title, t.due_date, t.notes, u.username, g.name as group_name
+                SELECT t.id, t.title, t.due_date, t.notes, u.username, g.name as group_name, t.user_id
                 FROM tasks t
                 JOIN users u ON t.user_id = u.id
                 JOIN groups g ON t.group_id = g.id
@@ -59,18 +63,16 @@ def get_tasks_for_user_and_groups(user_id, group_ids):
         cur.execute(query, params)
         return [
             {
-                "title": row[0],
-                "due_date": row[1],
-                "notes": row[2],
-                "username": row[3],
-                "group_name": row[4]
+                "id": row[0],
+                "title": row[1],
+                "due_date": row[2],
+                "notes": row[3],
+                "username": row[4],
+                "group_name": row[5],
+                "can_edit": row[6] == user_id
             }
             for row in cur.fetchall()
         ]
-
-
-
-
 def get_user_id(username):
     with sqlite3.connect(DB_PATH) as conn:
         cur = conn.cursor()
@@ -171,9 +173,6 @@ def kick_member(username, group_id, user_id):
         conn.commit()
         return True
 
-
-
-
 def delete_group(username, group_id):
     user_id = get_user_id(username)
     with sqlite3.connect(DB_PATH) as conn:
@@ -189,7 +188,6 @@ def delete_group(username, group_id):
         cur.execute("DELETE FROM groups WHERE id = ?", (group_id,))
         conn.commit()
         return True
-
 
 def is_user_creator(user_id, group_id):
     with sqlite3.connect(DB_PATH) as conn:
@@ -211,10 +209,39 @@ def leave_group(username, group_id):
         conn.commit()
         return True
 
-
 def get_email(username):
     with sqlite3.connect(DB_PATH) as conn:
         cur = conn.cursor()
         cur.execute("SELECT email FROM users WHERE username=?", (username,))
         row = cur.fetchone()
         return row[0] if row else None
+
+def delete_task(username, task_id):
+    user_id = get_user_id(username)
+    with sqlite3.connect(DB_PATH) as conn:
+        cur = conn.cursor()
+        cur.execute("DELETE FROM tasks WHERE id=? AND user_id=?", (task_id, user_id))
+        return cur.rowcount > 0
+
+def edit_task(username, task_id, title, due_date, notes):
+    user_id = get_user_id(username)
+    with sqlite3.connect(DB_PATH) as conn:
+        cur = conn.cursor()
+        cur.execute(
+            "UPDATE tasks SET title=?, due_date=?, notes=? WHERE id=? AND user_id=?",
+            (title, due_date, notes, task_id, user_id)
+        )
+        return cur.rowcount > 0
+
+def get_task_for_edit(username, task_id):
+    user_id = get_user_id(username)
+    with sqlite3.connect(DB_PATH) as conn:
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT id, title, due_date, notes FROM tasks WHERE id=? AND user_id=?",
+            (task_id, user_id)
+        )
+        row = cur.fetchone()
+        if row:
+            return {"id": row[0], "title": row[1], "due_date": row[2], "notes": row[3]}
+        return None

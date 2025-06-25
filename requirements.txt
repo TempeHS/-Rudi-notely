@@ -6,3 +6,4 @@ flask-wtf
 flask-csp
 requests
 Flask-Mail
+bcrypt

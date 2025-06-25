@@ -89,14 +89,35 @@ def homepage():
         return redirect(url_for("signin"))
     username = session['username']
     user_id = dbHandler.get_user_id(username)
-    # Get group IDs the user is in
     user_groups = dbHandler.get_user_groups(user_id)
-    group_ids = [g['id'] for g in user_groups]
-    tasks = dbHandler.get_tasks_for_user_and_groups(user_id, group_ids)
-    return render_template("homepage.html", username=username, tasks=tasks)
 
+    # If no filters in the query, check all by default
+    if not request.args:
+        selected_group_ids = [g['id'] for g in user_groups]
+        show_private = True
+    else:
+        selected_group_ids = request.args.getlist("group_ids", type=int)
+        show_private = "show_private" in request.args
 
-   
+    all_tasks = dbHandler.get_tasks_for_user_and_groups(user_id, [g['id'] for g in user_groups])
+
+    filtered_tasks = []
+    for t in all_tasks:
+        if t.get("group_name"):
+            if selected_group_ids or t.get("group_id") in selected_group_ids:
+                filtered_tasks.append(t)
+        elif show_private and not t.get("group_name"):
+            filtered_tasks.append(t)
+
+    return render_template(
+        "homepage.html",
+        username=username,
+        tasks=filtered_tasks,
+        user_groups=user_groups,
+        selected_group_ids=selected_group_ids,
+        show_private=show_private
+    )
+
 
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
@@ -285,6 +306,43 @@ def leave_group():
         flash("Group creators cannot leave their own group. Delete the group instead.", "danger")
     return redirect(url_for("groups"))
 
+
+
+@app.route("/delete_task", methods=["POST"])
+def delete_task():
+    if 'username' not in session:
+        return redirect(url_for("signin"))
+    task_id = request.form.get("task_id")
+    username = session['username']
+    if dbHandler.delete_task(username, task_id):
+        flash("Task deleted.", "success")
+    else:
+        flash("You can only delete your own tasks.", "danger")
+    return redirect(url_for("homepage"))
+
+@app.route("/edit_task", methods=["GET", "POST"])
+def edit_task():
+    if 'username' not in session:
+        return redirect(url_for("signin"))
+    if request.method == "POST":
+        task_id = request.form.get("task_id")
+        title = request.form.get("title")
+        due_date = request.form.get("due_date")
+        notes = request.form.get("notes")
+        username = session['username']
+        if dbHandler.edit_task(username, task_id, title, due_date, notes):
+            flash("Task updated.", "success")
+            return redirect(url_for("homepage"))
+        else:
+            flash("You can only edit your own tasks.", "danger")
+            return redirect(url_for("homepage"))
+    else:
+        task_id = request.args.get("task_id")
+        task = dbHandler.get_task_for_edit(session['username'], task_id)
+        if not task:
+            flash("Task not found or you do not have permission.", "danger")
+            return redirect(url_for("homepage"))
+        return render_template("edit_task.html", task=task)
 
 if __name__ == "__main__":
     app.run(debug=True)
