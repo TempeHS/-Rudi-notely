@@ -49,7 +49,10 @@
                 {% for task in tasks %}
                     <li class="task-item">
                         <strong>{{ task.title }}</strong>
-                        <span>Due: {{ task.due_date }}</span>
+                        <span>
+                            Due: 
+                            {{ task.due_date | replace("T", " ") | datetime("%b %d, %Y %I:%M %p") if task.due_date else "" }}
+                        </span>
                         {% if task.notes %}
                             <div class="task-notes">{{ task.notes }}</div>
                         {% endif %}
@@ -85,12 +88,3 @@
         {% endif %}
     </div>
 
-    <script>
-      setTimeout(function() {
-        var flashMessages = document.querySelector('.flashes');
-        if (flashMessages) {
-          flashMessages.style.display = 'none';
-        }
-      }, 3000);
-    </script>
-</body>

@@ -16,7 +16,7 @@
       {% endif %}
     {% endwith %}
     <div class="container" style="max-width: 400px; margin: 60px auto;">
-        <h2>Enter the code sent to your email</h2>
+        <h2>Enter the code sent to <b>{{ email }}</b></h2>
         <form method="post" action="{{ url_for('two_factor') }}">
             <input type="text" name="code" required placeholder="2FA Code" style="width:100%;padding:8px;margin-bottom:10px;">
             <button type="submit" style="width:100%;">Verify</button>

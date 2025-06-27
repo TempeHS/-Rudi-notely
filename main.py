@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, redirect, flash, session, url
 import userManagement as dbHandler
 from flask_mail import Mail, Message
 import random
-
+from datetime import datetime
 
 
 app = Flask(__name__)
@@ -58,15 +58,16 @@ def signin():
             session['2fa_username'] = username
             email = dbHandler.get_email(username)
             if email:
+                session['2fa_email'] = email  # Store email in session for 2FA page
                 msg = Message(
                     "Your Notely 2FA Code",
                     recipients=[email],
-                    sender=app.config['MAIL_USERNAME']  # Ensure sender is set
+                    sender=app.config['MAIL_USERNAME']
                 )
                 msg.body = f"Your Notely 2FA code is: {code}"
                 mail.send(msg)
                 flash("A 2FA code has been sent to your email.", "info")
-                return render_template("2fa.html")
+                return render_template("2fa.html", email=email)
             else:
                 flash("No email found for this user.", "danger")
                 return render_template("signin.html")
@@ -75,18 +76,24 @@ def signin():
             return render_template("signin.html")
     return render_template("signin.html")
 
+
+
 @app.route("/2fa", methods=["GET", "POST"])
 def two_factor():
+    email = session.get('2fa_email')  # Retrieve email from session
     if request.method == "POST":
         code = request.form.get("code")
         if code == session.get('2fa_code'):
             session['username'] = session.pop('2fa_username')
             session.pop('2fa_code')
+            session.pop('2fa_email', None)  # Clean up email from session
             flash("2FA successful!", "success")
             return redirect(url_for("homepage"))
         else:
             flash("Invalid 2FA code.", "danger")
-    return render_template("2fa.html")
+    return render_template("2fa.html", email=email)
+
+from datetime import datetime
 
 @app.route("/homepage")
 def homepage():
@@ -107,12 +114,22 @@ def homepage():
     all_tasks = dbHandler.get_tasks_for_user_and_groups(user_id, [g['id'] for g in user_groups])
 
     filtered_tasks = []
+    due_tasks = []
+    now = datetime.now()
     for t in all_tasks:
+        # Filtering logic
         if t.get("group_name"):
             if selected_group_ids or t.get("group_id") in selected_group_ids:
                 filtered_tasks.append(t)
         elif show_private and not t.get("group_name"):
             filtered_tasks.append(t)
+        # Check if task is due now or overdue
+        try:
+            due_date = datetime.strptime(t['due_date'], "%Y-%m-%dT%H:%M")
+            if due_date <= now:
+                due_tasks.append({"title": t["title"], "due_date": t["due_date"]})
+        except Exception:
+            pass
 
     return render_template(
         "homepage.html",
@@ -120,7 +137,8 @@ def homepage():
         tasks=filtered_tasks,
         user_groups=user_groups,
         selected_group_ids=selected_group_ids,
-        show_private=show_private
+        show_private=show_private,
+        due_tasks=due_tasks  # Pass due tasks to template
     )
 
 
@@ -348,6 +366,17 @@ def edit_task():
             flash("Task not found or you do not have permission.", "danger")
             return redirect(url_for("homepage"))
         return render_template("edit_task.html", task=task)
+
+
+@app.template_filter('datetime')
+def format_datetime(value, format="%Y-%m-%d %H:%M"):
+    try:
+        return datetime.strptime(value, "%Y-%m-%d %H:%M").strftime(format)
+    except Exception:
+        try:
+            return datetime.strptime(value, "%Y-%m-%dT%H:%M").strftime(format)
+        except Exception:
+            return value
 
 if __name__ == "__main__":
     app.run(debug=True)

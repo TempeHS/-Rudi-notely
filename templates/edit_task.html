@@ -13,7 +13,7 @@
             <label for="title">Title:</label>
             <input type="text" id="title" name="title" required value="{{ task.title }}">
             <label for="due_date">Due Date:</label>
-            <input type="date" id="due_date" name="due_date" required value="{{ task.due_date }}">
+            <input type="datetime-local" id="due_date" name="due_date" required value="{{ task.due_date }}">
             <label for="notes">Notes:</label>
             <textarea id="notes" name="notes">{{ task.notes }}</textarea>
             <button type="submit">Save Changes</button>
