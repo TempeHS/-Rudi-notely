@@ -30,6 +30,11 @@ def home():
     username = session.get('username')
     return render_template("index.html", username=username)
 
+@app.route("/privacy")
+def privacy():
+    return render_template("privacy.html")
+
+
 @app.route("/calender")
 def calender():
     if 'username' not in session:
